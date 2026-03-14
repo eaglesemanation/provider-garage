@@ -4,14 +4,14 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.19.0
-  name: clusterproviderconfigs.template.m.crossplane.io
+  name: clusterproviderconfigs.garage.m.crossplane.io
 spec:
-  group: template.m.crossplane.io
+  group: garage.m.crossplane.io
   names:
     categories:
     - crossplane
     - provider
-    - template
+    - garage
     kind: ClusterProviderConfig
     listKind: ClusterProviderConfigList
     plural: clusterproviderconfigs
@@ -29,7 +29,7 @@ spec:
     name: v1beta1
     schema:
       openAPIV3Schema:
-        description: A ClusterProviderConfig configures a Template provider.
+        description: A ClusterProviderConfig configures a Garage provider.
         properties:
           apiVersion:
             description: |-
