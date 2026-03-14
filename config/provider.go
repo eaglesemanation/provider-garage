@@ -6,8 +6,10 @@ import (
 
 	ujconfig "github.com/crossplane/upjet/v2/pkg/config"
 
-	nullCluster "github.com/eaglesemanation/provider-garage/config/cluster/null"
-	nullNamespaced "github.com/eaglesemanation/provider-garage/config/namespaced/null"
+	bucketCluster "github.com/eaglesemanation/provider-garage/config/cluster/bucket"
+	keyCluster "github.com/eaglesemanation/provider-garage/config/cluster/key"
+	bucketNamespaced "github.com/eaglesemanation/provider-garage/config/namespaced/bucket"
+	keyNamespaced "github.com/eaglesemanation/provider-garage/config/namespaced/key"
 )
 
 const (
@@ -33,7 +35,8 @@ func GetProvider() *ujconfig.Provider {
 
 	for _, configure := range []func(provider *ujconfig.Provider){
 		// add custom config functions
-		nullCluster.Configure,
+		bucketCluster.Configure,
+		keyCluster.Configure,
 	} {
 		configure(pc)
 	}
@@ -57,7 +60,8 @@ func GetProviderNamespaced() *ujconfig.Provider {
 
 	for _, configure := range []func(provider *ujconfig.Provider){
 		// add custom config functions
-		nullNamespaced.Configure,
+		bucketNamespaced.Configure,
+		keyNamespaced.Configure,
 	} {
 		configure(pc)
 	}

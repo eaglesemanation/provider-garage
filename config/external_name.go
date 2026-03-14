@@ -7,8 +7,9 @@ import (
 // ExternalNameConfigs contains all external name configurations for this
 // provider.
 var ExternalNameConfigs = map[string]config.ExternalName{
-	// Import requires using a randomly generated ID from provider: nl-2e21sda
-	"null_resource": idWithStub(),
+	"garage_bucket":            config.IdentifierFromProvider,
+	"garage_bucket_permission": config.IdentifierFromProvider,
+	"garage_key":               config.IdentifierFromProvider,
 }
 
 func idWithStub() config.ExternalName {
