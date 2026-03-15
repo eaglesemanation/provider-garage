@@ -9,7 +9,9 @@ import (
 
 	"github.com/crossplane/upjet/v2/pkg/controller"
 
-	resource "github.com/eaglesemanation/provider-garage/internal/controller/namespaced/null/resource"
+	bucket "github.com/eaglesemanation/provider-garage/internal/controller/namespaced/bucket/bucket"
+	permission "github.com/eaglesemanation/provider-garage/internal/controller/namespaced/bucket/permission"
+	key "github.com/eaglesemanation/provider-garage/internal/controller/namespaced/key/key"
 	providerconfig "github.com/eaglesemanation/provider-garage/internal/controller/namespaced/providerconfig"
 )
 
@@ -17,7 +19,9 @@ import (
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
-		resource.Setup,
+		bucket.Setup,
+		permission.Setup,
+		key.Setup,
 		providerconfig.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
@@ -31,7 +35,9 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 // the supplied manager gated.
 func SetupGated(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
-		resource.SetupGated,
+		bucket.SetupGated,
+		permission.SetupGated,
+		key.SetupGated,
 		providerconfig.SetupGated,
 	} {
 		if err := setup(mgr, o); err != nil {

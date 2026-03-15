@@ -1,40 +1,192 @@
-name: hashicorp/null
+name: jkossis/garage
 resources:
-    null_resource:
+    garage_bucket:
         subCategory: ""
-        description: The null_resource resource implements the standard resource lifecycle but takes no further action. On Terraform 1.4 and later, use the terraform_data resource type https://developer.hashicorp.com/terraform/language/resources/terraform-data instead. Terraform 1.9 and later support the moved configuration block from null_resource to terraform_data. The triggers argument allows specifying an arbitrary set of values that, when changed, will cause the resource to be replaced.
-        name: null_resource
-        title: null_resource Resource - terraform-provider-null
+        description: Manages a Garage S3 bucket.
+        name: garage_bucket
+        title: garage_bucket Resource - garage
         examples:
-            - name: cluster
+            - name: example
               manifest: |-
                 {
-                  "connection": [
-                    {
-                      "host": "${element(aws_instance.cluster[*].public_ip, 0)}"
-                    }
-                  ],
-                  "provisioner": {
-                    "remote-exec": [
-                      {
-                        "inline": [
-                          "bootstrap-cluster.sh ${join(\" \",\n      aws_instance.cluster[*].private_ip)}"
-                        ]
-                      }
-                    ]
-                  },
-                  "triggers": {
-                    "cluster_instance_ids": "${join(\",\", aws_instance.cluster[*].id)}"
-                  }
+                  "global_alias": "my-bucket"
                 }
+            - name: website
+              manifest: |-
+                {
+                  "global_alias": "my-website",
+                  "website_enabled": true,
+                  "website_error_document": "error.html",
+                  "website_index_document": "index.html"
+                }
+            - name: limited
+              manifest: |-
+                {
+                  "global_alias": "limited-bucket",
+                  "max_objects": 10000,
+                  "max_size": 1073741824
+                }
+            - name: full
+              manifest: |-
+                {
+                  "global_alias": "full-featured-bucket",
+                  "max_objects": 100000,
+                  "max_size": 10737418240,
+                  "website_enabled": true,
+                  "website_error_document": "404.html",
+                  "website_index_document": "index.html"
+                }
+        argumentDocs:
+            global_alias: (String) The global alias (name) for the bucket.
+            id: (String) The unique identifier of the bucket.
+            max_objects: (Number) Maximum number of objects in the bucket. Leave unset for unlimited.
+            max_size: (Number) Maximum size of the bucket in bytes. Leave unset for unlimited.
+            website_enabled: (Boolean) Enable website hosting for this bucket.
+            website_error_document: (String) The error document for website hosting (e.g., 'error.html').
+            website_index_document: (String) The index document for website hosting (e.g., 'index.html').
+        importStatements:
+            - |-
+              # Garage buckets can be imported using the bucket ID
+              terraform import garage_bucket.example bucket-id-here
+    garage_bucket_permission:
+        subCategory: ""
+        description: Manages permissions for an access key on a Garage S3 bucket.
+        name: garage_bucket_permission
+        title: garage_bucket_permission Resource - garage
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "access_key_id": "${garage_key.example.id}",
+                  "bucket_id": "${garage_bucket.example.id}",
+                  "owner": false,
+                  "read": true,
+                  "write": true
+                }
+              references:
+                access_key_id: garage_key.example.id
+                bucket_id: garage_bucket.example.id
               dependencies:
-                aws_instance.cluster: |-
+                garage_bucket.example: |-
                     {
-                      "ami": "ami-0dcc1e21636832c5d",
-                      "count": 3,
-                      "instance_type": "m5.large"
+                      "global_alias": "my-bucket"
+                    }
+                garage_key.admin: |-
+                    {
+                      "name": "admin-key"
+                    }
+                garage_key.example: |-
+                    {
+                      "name": "my-app-key"
+                    }
+                garage_key.readonly: |-
+                    {
+                      "name": "readonly-key"
+                    }
+            - name: readonly
+              manifest: |-
+                {
+                  "access_key_id": "${garage_key.readonly.id}",
+                  "bucket_id": "${garage_bucket.example.id}",
+                  "owner": false,
+                  "read": true,
+                  "write": false
+                }
+              references:
+                access_key_id: garage_key.readonly.id
+                bucket_id: garage_bucket.example.id
+              dependencies:
+                garage_bucket.example: |-
+                    {
+                      "global_alias": "my-bucket"
+                    }
+                garage_key.admin: |-
+                    {
+                      "name": "admin-key"
+                    }
+                garage_key.example: |-
+                    {
+                      "name": "my-app-key"
+                    }
+                garage_key.readonly: |-
+                    {
+                      "name": "readonly-key"
+                    }
+            - name: admin
+              manifest: |-
+                {
+                  "access_key_id": "${garage_key.admin.id}",
+                  "bucket_id": "${garage_bucket.example.id}",
+                  "owner": true,
+                  "read": true,
+                  "write": true
+                }
+              references:
+                access_key_id: garage_key.admin.id
+                bucket_id: garage_bucket.example.id
+              dependencies:
+                garage_bucket.example: |-
+                    {
+                      "global_alias": "my-bucket"
+                    }
+                garage_key.admin: |-
+                    {
+                      "name": "admin-key"
+                    }
+                garage_key.example: |-
+                    {
+                      "name": "my-app-key"
+                    }
+                garage_key.readonly: |-
+                    {
+                      "name": "readonly-key"
                     }
         argumentDocs:
-            id: (String) This is set to a random value at create time.
-            triggers: (Map of String) A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
-        importStatements: []
+            access_key_id: (String) The ID of the access key.
+            bucket_id: (String) The ID of the bucket.
+            id: '(String) The unique identifier of the permission (format: bucket_id/access_key_id).'
+            owner: (Boolean) Grant owner permission to the access key.
+            read: (Boolean) Grant read permission to the access key.
+            write: (Boolean) Grant write permission to the access key.
+        importStatements:
+            - |-
+              #!/bin/bash
+
+              # Garage bucket permissions can be imported using the format: bucket_id/access_key_id
+              terraform import garage_bucket_permission.example bucket-id/access-key-id
+    garage_key:
+        subCategory: ""
+        description: Manages a Garage access key.
+        name: garage_key
+        title: garage_key Resource - garage
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "name": "my-application-key"
+                }
+            - name: unnamed
+              manifest: '{}'
+            - name: imported
+              manifest: |-
+                {
+                  "id": "GK31c2f218a2e44f485b94239e",
+                  "name": "imported-key",
+                  "secret_access_key": "7d37d093435a75809f8f090b072de87928d1c355db9d9340431b28e776374705"
+                }
+            - name: imported_no_name
+              manifest: |-
+                {
+                  "id": "GKaf8f07b8e6f44c5a9c7b3d2e",
+                  "secret_access_key": "3c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d"
+                }
+        argumentDocs:
+            id: (String) The access key ID. If not provided, one will be generated.
+            name: (String) A human-friendly name for the access key.
+            secret_access_key: (String, Sensitive) The secret access key. If not provided, one will be generated (only available on creation).
+        importStatements:
+            - |-
+              #!/bin/bash
+
+              # Garage access keys can be imported using the access key ID
+              terraform import garage_key.example GKxxxxxxxxxxxxxxxxxxxx
