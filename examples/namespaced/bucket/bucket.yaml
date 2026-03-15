@@ -1,0 +1,11 @@
+apiVersion: bucket.garage.m.crossplane.io/v1alpha1
+kind: Bucket
+metadata:
+  name: test-bucket
+  namespace: crossplane-system
+spec:
+  forProvider:
+    globalAlias: test-bucket
+  providerConfigRef:
+    kind: ProviderConfig
+    name: garage

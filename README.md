@@ -7,15 +7,31 @@ API.
 
 ## Getting Started
 
-This garage serves as a starting point for generating a new [Crossplane Provider](https://docs.crossplane.io/latest/packages/providers/) using the [`upjet`](https://github.com/crossplane/upjet) tooling. Please follow the guide linked below to generate a new Provider:
+Install using declarative installation:
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-minio
+spec:
+  package: ghcr.io/eaglesemanation/provider-garage:v0.1.0
+EOF
+```
 
-https://github.com/crossplane/upjet/blob/main/docs/generating-a-provider.md
+You can see the API reference here: https://doc.crds.dev/github.com/eaglesemanation/provider-garage@v0.1.0
 
 ## Developing
 
 Run code-generation pipeline:
 ```console
-go run cmd/generator/main.go "$PWD"
+make generate
+```
+
+Test an example against a Kind k8s cluster (provider config is included throug setup.sh):
+```console
+make e2e UPTEST_EXAMPLE_LIST="examples/namespaced/bucket/bucket.yaml"
+kind delete cluster -n local-dev
 ```
 
 Run against a Kubernetes cluster:
