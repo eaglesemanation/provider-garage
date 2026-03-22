@@ -35,10 +35,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: Init submodules
-        run: |
-          make submodules
+        with:
+          submodules: true
 
       - name: Get modified CRDs
         id: modified-crds
@@ -65,10 +63,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: Init submodules
-        run: |
-          make submodules
+        with:
+          submodules: true
 
       - name: Setup Go
         uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
@@ -111,10 +107,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: Init submodules
-        run: |
-          make submodules
+        with:
+          submodules: true
 
       - name: Setup Go
         uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
@@ -160,10 +154,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: Init submodules
-        run: |
-          make submodules
+        with:
+          submodules: true
 
       - name: Fetch History
         run: git fetch --prune --unshallow
@@ -211,10 +203,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: Init submodules
-        run: |
-          make submodules
+        with:
+          submodules: true
 
       - name: Fetch History
         run: git fetch --prune --unshallow
@@ -273,10 +263,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: Init submodules
-        run: |
-          make submodules
+        with:
+          submodules: true
 
       - name: Fetch History
         run: git fetch --prune --unshallow
