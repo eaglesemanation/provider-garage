@@ -146,7 +146,11 @@ jobs:
         run: make vendor vendor.check
 
       - name: Check Diff
-        run: make check-diff
+        # TODO: Put back when patch is upstreamed
+        #run: make check-diff
+        run: |
+          make generate
+          if git status --porcelain | grep --invert-match '^ M terraform-provider-garage$'; then echo Uncommitted changes after make generate && false; fi
 
   unit-tests:
     runs-on: ubuntu-24.04
