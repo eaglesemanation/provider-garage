@@ -259,5 +259,6 @@ help-special: crossplane.help
 .PHONY: crossplane.help help-special
 
 # TODO(negz): Update CI to use these targets.
-vendor: modules.download
+# TODO(eaglesemanation): Drop submodules dep when patch is upstreamed
+vendor: submodules modules.download
 vendor.check: modules.check
