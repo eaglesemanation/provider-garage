@@ -15,6 +15,9 @@ on:
 jobs:
   publish-provider-package:
     uses: crossplane-contrib/provider-workflows/.github/workflows/publish-provider-non-family.yml@main
+    permissions:
+      contents: read
+      packages: write
     with:
       repository: provider-garage
       version: ${{ github.event.inputs.version }}
