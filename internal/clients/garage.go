@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/crossplane/crossplane-runtime/v2/pkg/resource"
+	garageProvider "github.com/jkossis/terraform-provider-garage/garage/provider"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -63,6 +64,9 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		if v, ok := creds[keyToken]; ok {
 			ps.Configuration[keyToken] = v
 		}
+
+		ps.FrameworkProvider = &garageProvider.GarageProvider{}
+
 		return ps, nil
 	}
 }

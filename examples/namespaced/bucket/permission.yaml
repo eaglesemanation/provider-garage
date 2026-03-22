@@ -1,0 +1,17 @@
+apiVersion: bucket.garage.m.crossplane.io/v1alpha1
+kind: Permission
+metadata:
+  name: test-permission
+  namespace: crossplane-system
+spec:
+  forProvider:
+    accessKeyIdRef:
+      name: test-key
+    bucketIdRef:
+      name: test-bucket
+    owner: false
+    read: true
+    write: true
+  providerConfigRef:
+    kind: ProviderConfig
+    name: garage

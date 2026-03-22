@@ -149,6 +149,8 @@ func main() {
 	metrics.Registry.MustRegister(metricRecorder)
 	metrics.Registry.MustRegister(stateMetrics)
 
+	operationTrackerStore := tjcontroller.NewOperationStore(log)
+
 	clusterOpts := tjcontroller.Options{
 		Options: xpcontroller.Options{
 			Logger:                  log,
@@ -162,7 +164,8 @@ func main() {
 				MRStateMetrics:          stateMetrics,
 			},
 		},
-		Provider: config.GetProvider(),
+		Provider:              config.GetProvider(),
+		OperationTrackerStore: operationTrackerStore,
 		// use the following WorkspaceStoreOption to enable the shared gRPC mode
 		// terraform.WithProviderRunner(terraform.NewSharedProvider(log, os.Getenv("TERRAFORM_NATIVE_PROVIDER_PATH"), terraform.WithNativeProviderArgs("-debuggable")))
 		WorkspaceStore: terraform.NewWorkspaceStore(log),
@@ -183,7 +186,8 @@ func main() {
 				MRStateMetrics:          stateMetrics,
 			},
 		},
-		Provider: config.GetProviderNamespaced(),
+		Provider:              config.GetProviderNamespaced(),
+		OperationTrackerStore: operationTrackerStore,
 		// use the following WorkspaceStoreOption to enable the shared gRPC mode
 		// terraform.WithProviderRunner(terraform.NewSharedProvider(log, os.Getenv("TERRAFORM_NATIVE_PROVIDER_PATH"), terraform.WithNativeProviderArgs("-debuggable")))
 		WorkspaceStore: terraform.NewWorkspaceStore(log),

@@ -1,0 +1,11 @@
+apiVersion: key.garage.m.crossplane.io/v1alpha1
+kind: Key
+metadata:
+  name: test-key
+  namespace: crossplane-system
+spec:
+  forProvider:
+    name: test-key
+  providerConfigRef:
+    kind: ProviderConfig
+    name: garage

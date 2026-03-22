@@ -4,6 +4,8 @@ import (
 	// Note(turkenh): we are importing this to embed provider schema document
 	_ "embed"
 
+	garageProvider "github.com/jkossis/terraform-provider-garage/garage/provider"
+
 	ujconfig "github.com/crossplane/upjet/v2/pkg/config"
 
 	bucketCluster "github.com/eaglesemanation/provider-garage/config/cluster/bucket"
@@ -25,9 +27,13 @@ var providerMetadata string
 
 // GetProvider returns provider configuration
 func GetProvider() *ujconfig.Provider {
+	gp := &garageProvider.GarageProvider{}
+
 	pc := ujconfig.NewProvider([]byte(providerSchema), resourcePrefix, modulePath, []byte(providerMetadata),
 		ujconfig.WithRootGroup("garage.crossplane.io"),
-		ujconfig.WithIncludeList(ExternalNameConfigured()),
+		ujconfig.WithIncludeList([]string{}),
+		ujconfig.WithTerraformPluginFrameworkProvider(gp),
+		ujconfig.WithTerraformPluginFrameworkIncludeList(ExternalNameConfigured()),
 		ujconfig.WithFeaturesPackage("internal/features"),
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),
@@ -47,9 +53,13 @@ func GetProvider() *ujconfig.Provider {
 
 // GetProviderNamespaced returns the namespaced provider configuration
 func GetProviderNamespaced() *ujconfig.Provider {
+	gp := &garageProvider.GarageProvider{}
+
 	pc := ujconfig.NewProvider([]byte(providerSchema), resourcePrefix, modulePath, []byte(providerMetadata),
 		ujconfig.WithRootGroup("garage.m.crossplane.io"),
-		ujconfig.WithIncludeList(ExternalNameConfigured()),
+		ujconfig.WithIncludeList([]string{}),
+		ujconfig.WithTerraformPluginFrameworkProvider(gp),
+		ujconfig.WithTerraformPluginFrameworkIncludeList(ExternalNameConfigured()),
 		ujconfig.WithFeaturesPackage("internal/features"),
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),

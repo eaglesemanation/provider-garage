@@ -1,0 +1,163 @@
+diff --git a/TESTING.md b/TESTING.md
+index 216d3ab..cba87b8 100644
+--- a/TESTING.md
++++ b/TESTING.md
+@@ -41,7 +41,7 @@ go test ./internal/client -v
+ --- PASS: TestListBuckets (0.00s)
+ ...
+ PASS
+-ok      terraform-provider-garage/internal/client       0.221s
++ok      github.com/jkossis/terraform-provider-garage/garage/client       0.221s
+ ```
+ 
+ ## Acceptance Tests
+diff --git a/internal/client/client.go b/garage/client/client.go
+similarity index 100%
+rename from internal/client/client.go
+rename to garage/client/client.go
+diff --git a/internal/client/client_test.go b/garage/client/client_test.go
+similarity index 100%
+rename from internal/client/client_test.go
+rename to garage/client/client_test.go
+diff --git a/internal/provider/bucket_data_source.go b/garage/provider/bucket_data_source.go
+similarity index 99%
+rename from internal/provider/bucket_data_source.go
+rename to garage/provider/bucket_data_source.go
+index bb99cf6..ebc2d30 100644
+--- a/internal/provider/bucket_data_source.go
++++ b/garage/provider/bucket_data_source.go
+@@ -12,7 +12,7 @@ import (
+ 	"github.com/hashicorp/terraform-plugin-framework/types"
+ 	"github.com/hashicorp/terraform-plugin-log/tflog"
+ 
+-	"terraform-provider-garage/internal/client"
++	"github.com/jkossis/terraform-provider-garage/garage/client"
+ )
+ 
+ // Ensure provider defined types fully satisfy framework interfaces.
+diff --git a/internal/provider/bucket_data_source_test.go b/garage/provider/bucket_data_source_test.go
+similarity index 100%
+rename from internal/provider/bucket_data_source_test.go
+rename to garage/provider/bucket_data_source_test.go
+diff --git a/internal/provider/bucket_permission_resource.go b/garage/provider/bucket_permission_resource.go
+similarity index 99%
+rename from internal/provider/bucket_permission_resource.go
+rename to garage/provider/bucket_permission_resource.go
+index 5007280..5754291 100644
+--- a/internal/provider/bucket_permission_resource.go
++++ b/garage/provider/bucket_permission_resource.go
+@@ -16,7 +16,7 @@ import (
+ 	"github.com/hashicorp/terraform-plugin-framework/types"
+ 	"github.com/hashicorp/terraform-plugin-log/tflog"
+ 
+-	"terraform-provider-garage/internal/client"
++	"github.com/jkossis/terraform-provider-garage/garage/client"
+ )
+ 
+ // Ensure provider defined types fully satisfy framework interfaces.
+diff --git a/internal/provider/bucket_permission_resource_test.go b/garage/provider/bucket_permission_resource_test.go
+similarity index 100%
+rename from internal/provider/bucket_permission_resource_test.go
+rename to garage/provider/bucket_permission_resource_test.go
+diff --git a/internal/provider/bucket_resource.go b/garage/provider/bucket_resource.go
+similarity index 99%
+rename from internal/provider/bucket_resource.go
+rename to garage/provider/bucket_resource.go
+index ec50bf5..21398dc 100644
+--- a/internal/provider/bucket_resource.go
++++ b/garage/provider/bucket_resource.go
+@@ -16,7 +16,7 @@ import (
+ 	"github.com/hashicorp/terraform-plugin-framework/types"
+ 	"github.com/hashicorp/terraform-plugin-log/tflog"
+ 
+-	"terraform-provider-garage/internal/client"
++	"github.com/jkossis/terraform-provider-garage/garage/client"
+ )
+ 
+ // Ensure provider defined types fully satisfy framework interfaces.
+diff --git a/internal/provider/bucket_resource_test.go b/garage/provider/bucket_resource_test.go
+similarity index 100%
+rename from internal/provider/bucket_resource_test.go
+rename to garage/provider/bucket_resource_test.go
+diff --git a/internal/provider/key_resource.go b/garage/provider/key_resource.go
+similarity index 97%
+rename from internal/provider/key_resource.go
+rename to garage/provider/key_resource.go
+index be97194..590ae31 100644
+--- a/internal/provider/key_resource.go
++++ b/garage/provider/key_resource.go
+@@ -15,7 +15,7 @@ import (
+ 	"github.com/hashicorp/terraform-plugin-framework/types"
+ 	"github.com/hashicorp/terraform-plugin-log/tflog"
+ 
+-	"terraform-provider-garage/internal/client"
++	"github.com/jkossis/terraform-provider-garage/garage/client"
+ )
+ 
+ // Ensure provider defined types fully satisfy framework interfaces.
+@@ -104,8 +104,8 @@ func (r *KeyResource) Create(ctx context.Context, req resource.CreateRequest, re
+ 	}
+ 
+ 	// Determine whether to use ImportKey or CreateKey
+-	hasID := !data.ID.IsNull() && !data.ID.IsUnknown()
+-	hasSecret := !data.SecretAccessKey.IsNull() && !data.SecretAccessKey.IsUnknown()
++	hasID := data.ID.ValueString() != ""
++	hasSecret := data.SecretAccessKey.ValueString() != ""
+ 
+ 	// If both ID and secret are provided, use ImportKey
+ 	if hasID && hasSecret {
+@@ -181,6 +181,7 @@ func (r *KeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *
+ 	}
+ 
+ 	keyID := data.ID.ValueString()
++
+ 	key, err := r.client.GetKeyInfo(ctx, client.GetKeyInfoRequest{
+ 		ID: keyID,
+ 	})
+diff --git a/internal/provider/key_resource_test.go b/garage/provider/key_resource_test.go
+similarity index 100%
+rename from internal/provider/key_resource_test.go
+rename to garage/provider/key_resource_test.go
+diff --git a/internal/provider/provider.go b/garage/provider/provider.go
+similarity index 98%
+rename from internal/provider/provider.go
+rename to garage/provider/provider.go
+index 0c255cb..65a93a8 100644
+--- a/internal/provider/provider.go
++++ b/garage/provider/provider.go
+@@ -15,7 +15,7 @@ import (
+ 	"github.com/hashicorp/terraform-plugin-framework/resource"
+ 	"github.com/hashicorp/terraform-plugin-framework/types"
+ 
+-	"terraform-provider-garage/internal/client"
++	"github.com/jkossis/terraform-provider-garage/garage/client"
+ )
+ 
+ // Ensure GarageProvider satisfies various provider interfaces.
+diff --git a/internal/provider/provider_test.go b/garage/provider/provider_test.go
+similarity index 100%
+rename from internal/provider/provider_test.go
+rename to garage/provider/provider_test.go
+diff --git a/go.mod b/go.mod
+index f7e0a43..96ab19f 100644
+--- a/go.mod
++++ b/go.mod
+@@ -1,4 +1,4 @@
+-module terraform-provider-garage
++module github.com/jkossis/terraform-provider-garage
+ 
+ go 1.24.0
+ 
+diff --git a/main.go b/main.go
+index eb1cf47..8e42ab2 100644
+--- a/main.go
++++ b/main.go
+@@ -10,7 +10,7 @@ import (
+ 
+ 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+ 
+-	"terraform-provider-garage/internal/provider"
++	"github.com/jkossis/terraform-provider-garage/garage/provider"
+ )
+ 
+ var (

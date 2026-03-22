@@ -16,6 +16,9 @@ spec:
       containers:
         - name: garage
           image: docker.io/dxflrs/garage:v2.2.0
+          env:
+            - name: RUST_LOG
+              value: netapp=debug,garage=debug
           volumeMounts:
             - name: config
               mountPath: /etc/garage.toml

@@ -1,3 +1,6 @@
 [submodule "build"]
 	path = build
 	url = https://github.com/crossplane/build
+[submodule "terraform-provider-garage"]
+	path = terraform-provider-garage
+	url = https://github.com/jkossis/terraform-provider-garage.git
