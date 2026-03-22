@@ -46,8 +46,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          submodules: true
+
+      - name: Init submodules
+        run: |
+          make submodules
 
       - name: Checkout PR
         id: checkout-pr
@@ -55,10 +57,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr checkout ${{ github.event.issue.number }}
-          git submodule update --init --recursive
           OUTPUT=$(git log -1 --format='%H')
           echo "commit-sha=$OUTPUT" >> $GITHUB_OUTPUT
-
 
       - name: Prepare The Example List
         env:
@@ -78,7 +78,6 @@ jobs:
 
           echo "example-list=${EXAMPLE_LIST:1}" >> $GITHUB_OUTPUT
           echo "example-hash=${EXAMPLE_HASH}" >> $GITHUB_OUTPUT
-
 
       - name: Create Pending Status Check
         env:
@@ -114,8 +113,10 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          submodules: true
+
+      - name: Init submodules
+        run: |
+          make submodules
 
       - name: Setup Go
         uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
@@ -128,10 +129,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr checkout ${{ github.event.issue.number }}
-          git submodule update --init --recursive
           OUTPUT=$(git log -1 --format='%H')
           echo "commit-sha=$OUTPUT" >> $GITHUB_OUTPUT
-
 
       - name: Vendor Dependencies
         run: make vendor vendor.check
@@ -148,7 +147,6 @@ jobs:
           mkdir -p .work && echo "${{ secrets.UPTEST_DATASOURCE }}" > .work/uptest-datasource.yaml
           make e2e
 
-
       - name: Create Successful Status Check
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -163,12 +161,10 @@ jobs:
             -f description='Passed' \
             -f context="Uptest-${EXAMPLE_HASH}"
 
-
       - name: Collect Cluster Dump
         if: always()
         run: |
           make controlplane.dump
-
 
       - name: Upload Cluster Dump
         if: always()
@@ -182,7 +178,6 @@ jobs:
         run: |
           eval $(make --no-print-directory build.vars)
           ${KUBECTL} delete managed --all || true
-
 
       - name: Create Unsuccessful Status Check
         if: failure()
