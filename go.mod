@@ -11,7 +11,6 @@ require (
 	github.com/crossplane/crossplane-tools v0.0.0-20251017183449-dd4517244339
 	github.com/crossplane/upjet/v2 v2.2.0
 	github.com/hashicorp/terraform-plugin-go v0.29.0
-	github.com/jkossis/terraform-provider-garage v0.0.0-00010101000000-000000000000
 	github.com/pkg/errors v0.9.1
 	google.golang.org/grpc v1.75.1
 	k8s.io/api v0.34.3
@@ -26,7 +25,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
 	github.com/antchfx/htmlquery v1.2.4 // indirect
-	github.com/antchfx/xpath v1.2.0 // indirect
+	github.com/antchfx/xpath v1.3.6 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
